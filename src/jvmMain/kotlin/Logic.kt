@@ -1,5 +1,6 @@
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -22,10 +23,8 @@ object BusinessLogic {
     private suspend fun makeFolder(number: Int, path: String, suffix: String): Boolean {
         var result = true
         try {
-            coroutineScope {
-                launch {
-                    Files.createDirectory(Paths.get("$path/$number$suffix"))
-                }.join()
+            withContext(Dispatchers.IO) {
+                Files.createDirectory(Paths.get("$path/$number$suffix"))
             }
         } catch (e: Exception) {
             result = false
