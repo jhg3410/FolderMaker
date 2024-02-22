@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
 
 @Composable
 @Preview
@@ -30,8 +32,14 @@ fun App() {
     var path: String by remember { mutableStateOf("") }
     var suffix: String by remember { mutableStateOf("번") }
     val focusManager = LocalFocusManager.current
+    var fileDialogVisible by remember { mutableStateOf(false) }
 
     MKTheme {
+        DirectoryPicker(show = fileDialogVisible, title = "경로 선택") {
+            path = it ?: ""
+            fileDialogVisible = false
+        }
+
         Column(
             modifier = Modifier
                 .clickable(
@@ -61,8 +69,12 @@ fun App() {
                     modifier = Modifier.weight(1f),
                     value = startNumber,
                     onValueChange = { value ->
-                        value.toIntOrNull()?.let {
+                        if (value.isEmpty()) {
                             startNumber = value
+                        } else {
+                            value.toIntOrNull()?.let {
+                                startNumber = value
+                            }
                         }
                     },
                 )
@@ -72,8 +84,12 @@ fun App() {
                     modifier = Modifier.weight(1f),
                     value = endNumber,
                     onValueChange = { value ->
-                        value.toIntOrNull()?.let {
+                        if (value.isEmpty()) {
                             endNumber = value
+                        } else {
+                            value.toIntOrNull()?.let {
+                                endNumber = value
+                            }
                         }
                     },
                 )
@@ -86,14 +102,24 @@ fun App() {
                     }
                 )
             }
-            OutlinedTextField(
-                label = { Text(text = "경로", fontSize = 11.sp) },
-                modifier = Modifier.fillMaxWidth(),
-                value = path,
-                onValueChange = { value ->
-                    path = value
-                },
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { fileDialogVisible = true }
+                ) {
+                    Text("경로 선택")
+                }
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(text = "선택된 경로: ")
+                        }
+                        append(path)
+                    }
+                )
+            }
             Button(
                 enabled = startNumber != "" && endNumber != "" && path != "",
                 onClick = {
@@ -104,16 +130,15 @@ fun App() {
                         suffix = suffix
                     )
                 }) {
-                Text("MAKE")
+                Text("MAKE!")
             }
         }
     }
 }
 
-
 fun main() = application {
     val state = rememberWindowState(
-        size = DpSize(width = 400.dp, height = 350.dp)
+        size = DpSize(width = 400.dp, height = 320.dp)
     )
     Window(
         title = TITLE,

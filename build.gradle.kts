@@ -25,6 +25,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             }
         }
         val jvmTest by getting
