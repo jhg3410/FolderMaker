@@ -23,6 +23,9 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 @Preview
@@ -32,12 +35,19 @@ fun App() {
     var path: String by remember { mutableStateOf("") }
     var suffix: String by remember { mutableStateOf("번") }
     val focusManager = LocalFocusManager.current
-    var fileDialogVisible by remember { mutableStateOf(false) }
+    var showDirectoryPicker by remember { mutableStateOf(false) }
+    var showResultDialog by remember { mutableStateOf(false) }
+    var resultDialogTitle = ""
+    var resultDialogMessage = ""
 
     MKTheme {
-        DirectoryPicker(show = fileDialogVisible, title = "경로 선택") {
+        DirectoryPicker(show = showDirectoryPicker, title = "경로 선택") {
             path = it ?: ""
-            fileDialogVisible = false
+            showDirectoryPicker = false
+        }
+
+        if (showResultDialog) {
+            MKDialog(title = resultDialogTitle, message = resultDialogMessage, onDismiss = { showResultDialog = false })
         }
 
         Column(
@@ -107,7 +117,7 @@ fun App() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = { fileDialogVisible = true }
+                    onClick = { showDirectoryPicker = true }
                 ) {
                     Text("경로 선택")
                 }
@@ -123,12 +133,22 @@ fun App() {
             Button(
                 enabled = startNumber != "" && endNumber != "" && path != "",
                 onClick = {
-                    makeFolders(
-                        start = startNumber.toIntOrNull() ?: throw IllegalArgumentException(ERROR_MESSAGE),
-                        end = endNumber.toIntOrNull() ?: throw IllegalArgumentException(ERROR_MESSAGE),
-                        path = path,
-                        suffix = suffix
-                    )
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val result = makeFolders(
+                            start = startNumber.toIntOrNull() ?: throw IllegalArgumentException(ERROR_MESSAGE),
+                            end = endNumber.toIntOrNull() ?: throw IllegalArgumentException(ERROR_MESSAGE),
+                            path = path,
+                            suffix = suffix
+                        )
+                        if (result) {
+                            resultDialogTitle = "성공"
+                            resultDialogMessage = ""
+                        } else {
+                            resultDialogTitle = "실패"
+                            resultDialogMessage = "해당 경로에 동일한 이름의 폴더가 있으면 안됩니다"
+                        }
+                        showResultDialog = true
+                    }
                 }) {
                 Text("MAKE!")
             }
