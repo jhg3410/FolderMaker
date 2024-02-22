@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
@@ -42,7 +43,7 @@ fun App() {
 
     MKTheme {
         DirectoryPicker(show = showDirectoryPicker, title = "경로 선택") {
-            path = it ?: ""
+            path = it ?: path
             showDirectoryPicker = false
         }
 
@@ -64,9 +65,9 @@ fun App() {
         ) {
             Text(
                 buildAnnotatedString {
-                    append("Make")
+                    append("Folder")
                     withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
-                        append("Folder")
+                        append("Maker")
                     }
                 }
             )
@@ -158,6 +159,7 @@ fun App() {
 
 fun main() = application {
     val state = rememberWindowState(
+        position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(width = 400.dp, height = 320.dp)
     )
     Window(
