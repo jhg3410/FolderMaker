@@ -8,7 +8,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,7 +29,7 @@ fun App() {
     // todo: input Suffix
     var suffix: String by remember { mutableStateOf("번") }
 
-    MaterialTheme {
+    MKTheme {
         Column(
             modifier = Modifier.fillMaxSize().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -39,7 +38,7 @@ fun App() {
             Text(
                 buildAnnotatedString {
                     append("make")
-                    withStyle(style = SpanStyle(color = Color.Blue)) {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
                         append("Folder")
                     }
                 }
@@ -50,7 +49,7 @@ fun App() {
             ) {
                 OutlinedTextField(
                     label = { Text("시작 번호", fontSize = 11.sp) },
-                    modifier = Modifier.width(100.dp),
+                    modifier = Modifier.weight(1f),
                     value = startNumber,
                     onValueChange = { value ->
                         value.toIntOrNull()?.let {
@@ -61,7 +60,7 @@ fun App() {
                 Text("~")
                 OutlinedTextField(
                     label = { Text("끝 번호", fontSize = 11.sp) },
-                    modifier = Modifier.width(100.dp),
+                    modifier = Modifier.weight(1f),
                     value = endNumber,
                     onValueChange = { value ->
                         value.toIntOrNull()?.let {
@@ -69,10 +68,18 @@ fun App() {
                         }
                     },
                 )
+                OutlinedTextField(
+                    label = { Text("Suffix") },
+                    modifier = Modifier.weight(0.7f),
+                    value = suffix,
+                    onValueChange = {
+                        suffix = it
+                    }
+                )
             }
             OutlinedTextField(
-                label = { Text(text = "경로") },
-                modifier = Modifier,
+                label = { Text(text = "경로", fontSize = 11.sp) },
+                modifier = Modifier.fillMaxWidth(),
                 value = path,
                 onValueChange = { value ->
                     path = value
@@ -97,10 +104,10 @@ fun App() {
 
 fun main() = application {
     val state = rememberWindowState(
-        size = DpSize(width = 350.dp, height = 350.dp)
+        size = DpSize(width = 400.dp, height = 350.dp)
     )
     Window(
-        title = "make Folder",
+        title = TITLE,
         state = state,
         onCloseRequest = ::exitApplication,
         icon = painterResource("green_folder.ico")
