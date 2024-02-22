@@ -36,6 +36,7 @@ compose.desktop {
     application {
         mainClass = "MainKt"
         nativeDistributions {
+            modules("jdk.unsupported")
             targetFormats(TargetFormat.Exe, TargetFormat.Dmg)
             packageName = "makeFolder"
             description = "hihi"
