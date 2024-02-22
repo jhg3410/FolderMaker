@@ -1,2 +1,2 @@
 const val ERROR_MESSAGE = "contact developer"
-const val TITLE = "makeFolder"
+const val TITLE = "MakeFolder"

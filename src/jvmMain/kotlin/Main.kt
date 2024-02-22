@@ -54,7 +54,7 @@ fun App() {
         ) {
             Text(
                 buildAnnotatedString {
-                    append("make")
+                    append("Make")
                     withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
                         append("Folder")
                     }
